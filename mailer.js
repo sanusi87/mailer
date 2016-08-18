@@ -43,13 +43,13 @@ module.exports = {
 	*/
 	send: function(provider, emailData, resultCallback){
 		if( provider == 1 ){
-			var index = Math.floor( Math.random() * config.usedAccounts.length );
+			// var index = Math.floor( Math.random() * config.usedAccounts.length );
+			var index = 1;
 			this.sendGrid(index).sendMail(emailData, function(err, result){
 				resultCallback(err, result);
 			});
 		}else if( provider == 2 ){
 			var sendingDomain = checkSendingDomain(emailData.from);
-			
 			if( sendingDomain === false ){
 				resultCallback('Unconfigured Sending Domain!');
 			}else{
@@ -61,6 +61,7 @@ module.exports = {
 	}
 }
 
+// when provider is two
 function checkSendingDomain(from){
 	var index,
 	_from;
@@ -71,9 +72,9 @@ function checkSendingDomain(from){
 		_from = from;
 	}
 	console.log(_from);
-	if( /my$/ig.test( _from ) ){ // jenjobs.my
+	if( /my(|\>)$/ig.test( _from ) ){ // jenjobs.my
 		index = 1;
-	}else if( /com$/ig.test( _from ) ){ // jenjobs.com
+	}else if( /com(|\>)$/ig.test( _from ) ){ // jenjobs.com
 		index = 0;
 	}else{
 		index = false;

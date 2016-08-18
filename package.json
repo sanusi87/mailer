@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node index2.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "mandrill-api": "^1.0.45",

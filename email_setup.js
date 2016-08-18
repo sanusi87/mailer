@@ -2,6 +2,8 @@ var http = require('http');
 var fs = require('fs');
 var moment = require('moment');
 
+var path = '/home/jenjobs/node/mailer/';
+
 module.exports = {
 	/*
 	emailData: {
@@ -13,7 +15,7 @@ module.exports = {
 	}
 	*/
 	loadTemplate: function(emailData, resultCallback){
-		fs.readFile('layout.html', function(err, data){
+		fs.readFile(path+'layout.html', function(err, data){
 			if( err ){
 				resultCallback(err);
 			}else{
@@ -22,7 +24,7 @@ module.exports = {
 				layoutContent = layoutContent.replace( /\{\@YEAR\}/g, moment().format('YYYY') );
 				layoutContent = layoutContent.replace( /\{\@TITLE\}/g, emailData.title );
 				
-				fs.readFile(emailData.template+'.html', function(err, data2){
+				fs.readFile(path+emailData.template+'.html', function(err, data2){
 					if( err ){
 						resultCallback(err);
 					}else{
@@ -52,15 +54,15 @@ module.exports = {
 								
 								name: xxx,
 								position: xxx,
-								jsid: xxx,
-								appid: xxx
+								js_profile_id: xxx, 		----- additional field
+								js_application_id: xxx 		----- additional field
 							}
 							*/
 							templateContent = templateContent.replace( /\{\@JOBSEEKERNAME\}/g, emailData.name );
 							templateContent = templateContent.replace( /\{\@POSITIONTITLE\}/g, emailData.position );
 							templateContent = templateContent.replace( /\{\@TITLE\}/g, emailData.title );
 							//////////////////// download attachment
-							http.get('http://www.jenjobs.com/applicant/details?jsid='+emailData.jsid+'&appid='+emailData.appid, function(response){
+							http.get('http://www.jenjobs.com/applicant/details?jsid='+emailData.js_profile_id+'&appid='+emailData.js_application_id, function(response){
 								var chunks = [];
 								response.on('data', function(chunk){
 									chunks.push(chunk);
@@ -86,8 +88,11 @@ module.exports = {
 							*/
 							templateContent = templateContent.replace( /\{\@REQUESTEDON\}/g, moment().format('DD MMM YYYY') );
 							templateContent = templateContent.replace( /\{\@RESETURL\}/g, emailData.url );
+							templateContent = templateContent.replace( /\{\@TITLE\}/g, emailData.title );
 							layoutContent = layoutContent.replace( /\{\@CONTENT\}/g, templateContent );
 							resultCallback(null, layoutContent);
+						}else{
+							resultCallback('Email template is required!');
 						}
 					}
 				});
